@@ -23,7 +23,7 @@ def recommend(user, W, train,k = 80):
     return rank     #return a dict(item:wuv)
 
 #get the recommend table
-def getRecommend(user,train,n = 10,k = 80): #k the no of recommend items,optimal!!
+def getRecommend(user,train,n = 10,k = 80): #k the no of recommend items
     W = userSimilarity(train)
     rank = recommend(user,W,train,k)
     topN = sorted(rank.items(),key = itemgetter(1),reverse = True)[0:n]

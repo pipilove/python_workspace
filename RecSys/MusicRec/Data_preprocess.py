@@ -24,8 +24,6 @@ import random
 
 from numpy import array
 
-from RecSys.MusicRec.Models import Item, User
-
 
 def convert_raw_no(input_filename, output_filename):
     '''
@@ -209,28 +207,6 @@ def convert_no(input_filename, output_filename):
     output_file.close()
 
 
-def get_convert_no_small_dataset_max_item_id(input_filename):
-    '''
-    计算item最大的id
-    :param input_filename:
-    :return:
-    '''
-    input_file = open(input_filename, encoding='utf-8')
-    max_item_id = 20000
-
-    start_time = datetime.datetime.now()
-    for line_id, line in enumerate(input_file):
-        if line_id % 500000 == 0:
-            print('******** %d ********' % line_id)
-            print(datetime.datetime.now() - start_time)
-        user_id, timestamp, art_id, art_name, item_id, item_name = array(line.strip().split('\t'))
-        item_id = int(item_id)
-        if item_id > max_item_id:
-            max_item_id = item_id
-    input_file.close()
-    return max_item_id
-
-
 def get_train_test(input_filename, train_filename, test_filename):
     '''
     分割原有数据集为trainning set和test set
@@ -260,19 +236,41 @@ def get_train_test(input_filename, train_filename, test_filename):
 
 if __name__ == '__main__':
     # raw_input_filename = r'\\tsclient\E\machine_learning\datasets\lastfm-dataset-1K\userid-timestamp-artid-artname-traid-traname2.tsv'
-    raw_input_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\userid-timestamp-artid-artname-traid-traname.tsv'
-    input_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\userid-timestamp-artid-artname-traid-traname2.tsv'
+    # raw_input_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\userid-timestamp-artid-artname-traid-traname.tsv'
+    # input_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\userid-timestamp-artid-artname-traid-traname2.tsv'
 
-    del_none_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\delnone.tsv'
-    small_dataset_filaname = r'E:\machine_learning\datasets\lastfm-dataset-1K\small_dataset.tsv'
-    convert_no_small_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\convert_no_small1.tsv'
-    train_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\train_data.tsv'
-    test_filename = r'E:\machine_learning\datasets\lastfm-dataset-1K\test_data.tsv'
+    small_dataset_filaname = r'.\datasets\lastfm-dataset-1K\small_dataset.tsv'
+    convert_no_small_filename = r'.\datasets\lastfm-dataset-1K\convert_no_small_dataset20.tsv'
+    train_filename = r'.\datasets\lastfm-dataset-1K\train_data.tsv'
+    test_filename = r'.\datasets\lastfm-dataset-1K\test_data.tsv'
 
     # del_none(raw_input_filename, del_none_filename)
     # sample_small_data(del_none_filename, small_dataset_filaname)
     # convert_no(small_dataset_filaname, convert_no_small_filename)
-    get_train_test(convert_no_small_filename, train_filename, test_filename)
+    # get_item_infor(convert_no_small_filename)
+    # get_train_test(convert_no_small_filename, train_filename, test_filename)
+
+
+def get_item_infor(input_filename, item_infor_filename=r'..\..\datasets\lastfm-dataset-1K\item_infor.tsv'):
+    '''
+    获取item的信息：item_id, item_name, art_name, item_link并存入文件中
+    :return:
+    '''
+    input_file = open(input_filename, encoding='utf-8')
+    item_infor_file = open(item_infor_filename, 'w', encoding='utf-8')
+
+    item_ids_set = set()
+    start_time = datetime.datetime.now()
+    for line_id, line in enumerate(input_file):
+        if line_id % 100000 == 0:
+            print('******** %d ********' % line_id)
+            print(datetime.datetime.now() - start_time)
+        user_id, timestamp, art_id, art_name, item_id, item_name = array(line.strip().split('\t'))
+        if item_id not in item_ids_set:
+            item_ids_set.add(item_id)
+            item_infor_file.write("%s\t%s\t%s\n" % (item_id, item_name, art_name))
+    input_file.close()
+    item_infor_file.close()
 
 
 def data_preprocess0(input_filename, output_filename):
