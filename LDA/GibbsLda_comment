@@ -1,0 +1,94 @@
+I don't think numpy/scipy are making this code slower rather faster. I did a quick test and found that a pure python implementation of sampling from a multinomial distribution with 1 trial (i.e. a discrete distribution)
+
+import random
+
+def draw(p):
+    r = random.random()
+    for i in range(len(p)):
+        r = r - p[i]
+        if r < 0:
+            return i
+    return len(p) - 1
+
+is much faster than using numpy.random's multinomial function
+
+
+def draw(p):
+    return np.random.multinomial(1, p).argmax()
+
+
+
+I'll try to make a cython version when I have time.
+
+There is onehttps: // github.com / fannix / lda - cython by
+
+@fannix
+
+
+marcmaxson
+commented
+on
+4
+Apr
+2013
+Not
+sure
+why
+the
+import failed
+
+to
+include
+the
+misc
+subfolder, but
+I
+was
+able
+to
+get
+the
+demonstration
+running
+with this tweak to save_document_image():
+
+
+def save_document_image(filename, doc, zoom=2):
+    """
+    Save document as an image.
+
+    doc must be a square matrix
+    """
+    height, width = doc.shape
+    zoom = np.ones((width * zoom, width * zoom))
+    # imsave scales pixels between 0 and 255 automatically
+    sp.misc.imsave(filename, np.kron(doc, zoom))
+    try:
+        sp.misc.imsave(filename, np.kron(doc, zoom))
+    except:
+        import scipy.misc
+
+        scipy.misc.imsave(filename, np.kron(doc, zoom))
+svanschalkwyk commented on 18 Apr 2013
+@marc - still not able to find misc even though it is imported as part of sp (have verified). Is sp overwritten somewhere? Wil llook when I have time.
+@Mathiue - thanks for the code!
+
+whille commented on 15 May 2013
+hi @Mathiue, here const doc_length is used for training samples. According to Gregor's Parameter estimation for text analysis, Fig.7 defination, Nm(doc length) should follow Poisson distribution, E=��.
+so in line 210, const number should better modified to
+
+for n in np.random.poisson(length, DOC_NUM):
+
+elplatt commented on 25 Nov 2013
+Thanks for posting this. I'd like to use this code for a project. If that's ok, can you add a license?
+
+CoryDolphin commented on 13 Dec 2013
+Quick note to anyone struggling with the scipy.misc.imsave import, you need to have PIL installed for this import to work. Python dependency management is crazy!
+
+jnothman commented on 10 May 2014
+Re @cdfox's comment, you're much better off doing a searchsorted(cumsum(p), rand()) than np.random.multinomial(1,p).argmax() which is efficient only when you're taking a large sample.
+
+ChangUk commented on 9 Jun 2014
+I implemented Gibbs sampler for standard LDA inference. My program updates alpha(vector) and beta(scalar) during the iterative sampling process by using Minka's fixed-point iteration.
+Visit here: https://gist.github.com/ChangUk/a741e0ccf5737954956e
+I hope it is helpful for your project. Thanks.

@@ -1,0 +1,23 @@
+D:\python3.4.2\python.exe E:/mine/pythonworkspace/LDA/BuildLda.py
+ dict load from ./id_word.dict successfully ... 
+ corpus load from ./corpus.mm successfully ... 
+13180
+total running time =  0:00:46.952685
+ model.log_perplexity for test_texts with num_topics=3 :  -15.3428342627 
+total running time =  0:00:46.947685
+ model.log_perplexity for test_texts with num_topics=5 :  -16.5397991363 
+total running time =  0:00:50.863897
+ model.log_perplexity for test_texts with num_topics=10 :  -18.9059128684 
+total running time =  0:01:00.784477
+ model.log_perplexity for test_texts with num_topics=30 :  -26.6086660872 
+total running time =  0:01:04.511690
+ model.log_perplexity for test_texts with num_topics=50 :  -32.0232991286 
+total running time =  0:01:22.948737
+ model.log_perplexity for test_texts with num_topics=100 :  -40.3034088439 
+total running time =  0:01:38.209522
+ model.log_perplexity for test_texts with num_topics=150 :  -50.0032269141 
+total running time =  0:01:51.518375
+ model.log_perplexity for test_texts with num_topics=200 :  -55.8569076151 
+total running time =  0:02:22.468146
+ model.log_perplexity for test_texts with num_topics=300 :  -41.3135710481 
+
