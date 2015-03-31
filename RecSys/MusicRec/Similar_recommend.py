@@ -22,6 +22,7 @@ __mtime__ = '3/20/2015-020'
 from collections import defaultdict
 import datetime
 import linecache
+from time import sleep
 
 from numpy import loadtxt, append
 from numpy import random
@@ -31,7 +32,8 @@ from scipy import spatial
 from numpy import argsort, array, zeros, savetxt
 from numpy import dot
 from scipy.io import mmwrite, mmread
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, vstack
+from scipy.sparse.linalg.eigen.lobpcg.lobpcg import pause
 
 from RecSys.MusicRec.Models import User, Item
 
@@ -261,7 +263,53 @@ def recommend_all(user_item_mat):
     item_item_mat, user_user_mat = cal_similar(user_item_mat)
 
 
-def recommend_new(user_class, user_item_mat, top_n=50):
+def user_based_rec_sparse(user_class, user_item_sparse_mat, top_n=50):
+    '''
+    对用户user_class推荐item
+    :param item_item_mat:
+    :param user_user_mat:
+    :return:
+'''
+    new_user_item_mat = zeros([1, user_item_sparse_mat.shape[1]])  # 二维数组
+    for item_id in user_class.items_dict.keys():
+        new_user_item_mat[0][item_id] = user_class.items_dict[item_id][1]
+    # print("new_user_item_vec", new_user_item_mat[0])
+    new_user_item_mat = regularize_user_item_mat(new_user_item_mat)
+    new_user_item_sparse_mat = csr_matrix(new_user_item_mat)
+    new_user_item_sparse_vec = new_user_item_sparse_mat[0]  # 实际还是一个稀疏矩阵
+    # print("new_user_item_sparse_vec", new_user_item_sparse_vec)
+
+    users_similar = zeros([user_item_sparse_mat.shape[0]])
+    rows, cols = user_item_sparse_mat.nonzero()
+    rows = set(rows)
+    # print(rows, "****")
+    for row in rows:
+        # print(new_user_item_sparse_vec.dot(user_item_sparse_mat[row].transpose())[0, 0], "....")
+        users_similar[row] = new_user_item_sparse_vec.dot(user_item_sparse_mat[row].transpose())[0, 0]
+    # print("users_similar", users_similar)
+    user_item_sparse_mat = vstack([user_item_sparse_mat, new_user_item_sparse_mat])
+    sorted_users_similar_indexs = argsort(-users_similar)[:top_n * 10]
+    # print("sorted_users_similar_indexs", sorted_users_similar_indexs)
+
+    rec_item_dict = dict()
+    for old_user_item_sparse_vec in user_item_sparse_mat[sorted_users_similar_indexs]:
+        rec_item_dict.update(get_rec_list_sparse(new_user_item_sparse_vec, old_user_item_sparse_vec))
+        if len(rec_item_dict) >= top_n:
+            break
+    return rec_item_dict
+
+
+def get_rec_list_sparse(new_user_item_sparse_vec, old_user_item_sparse_vec, threshold=1):
+    rec_item_dict = dict()
+    rows, cols = old_user_item_sparse_vec.nonzero()
+    for row, col in zip(rows, cols):
+        ui = old_user_item_sparse_vec[row, col]
+        if ui > threshold and new_user_item_sparse_vec[row, col] == 0:
+            rec_item_dict[col] = ui
+    return rec_item_dict
+
+
+def user_based_rec(user_class, user_item_mat, top_n=50):
     '''
     对用户user_class推荐item
     :param item_item_mat:
@@ -348,7 +396,8 @@ def get_final_rec_item_list(new_user_item_dict, rec_item_dict, item_item_sparse_
             final_rec_item_dict[rec_item_id] += get_item_item_similar(item_item_sparse_dict, rec_item_id,
                                                                       new_user_item_id) * rec_item_weight * new_user_item_weight
     sorted_final_rec_item_tuples = sorted(final_rec_item_dict.items(), key=lambda i: i[1], reverse=True)[:top_n]
-    return sorted_final_rec_item_tuples
+    print(sorted_final_rec_item_tuples)
+    return [t[0] for t in sorted_final_rec_item_tuples if t[1] is not 0]
 
 
 def item_based_rec(new_user_item_dict, item_item_sparse_dict, top_n=10):
@@ -360,8 +409,10 @@ def item_based_rec(new_user_item_dict, item_item_sparse_dict, top_n=10):
     '''
     cmp_item_set = set()
     for i in item_item_sparse_dict.keys():
-        cmp_item_set.add(i[0])
-        cmp_item_set.add(i[1])
+        if i[0] not in new_user_item_dict.keys():
+            cmp_item_set.add(i[0])
+        if i[1] not in new_user_item_dict.keys():
+            cmp_item_set.add(i[1])
     final_item_based_rec_dict = defaultdict(int)
     for cmp_item_id in cmp_item_set:
         for new_user_item_id in new_user_item_dict:
@@ -385,12 +436,13 @@ def get_top_items(user_item_mat, top_n=100, top_n_items_filename=r'..\..\dataset
 
 
 if __name__ == '__main__':
+    s = datetime.datetime.now()
     convert_no_small_filename = r'.\datasets\lastfm-dataset-1K\convert_no_small_dataset20.tsv'
     train_filename = r'.\datasets\lastfm-dataset-1K\train_data.tsv'
     raw_user_item_mat_filename = r'.\datasets\lastfm-dataset-1K\raw_user_item_mat.npy'
-    user_item_mat_filename = r'.\datasets\lastfm-dataset-1K\user_item_mat4.npy'
-    user_item_sparse_mat_filename = r'.\datasets\lastfm-dataset-1K\user_item_sparse_mat.mtx'
-    item_item_csr_mat_filename = r'.\datasets\lastfm-dataset-1K\item_item_csr_mat4.mtx'
+    user_item_mat_filename = r'.\datasets\lastfm-dataset-1K\user_item_mat3.npy'
+    user_item_sparse_mat_filename = r'.\datasets\lastfm-dataset-1K\user_item_sparse_mat3.mtx'
+    item_item_csr_mat_filename = r'.\datasets\lastfm-dataset-1K\item_item_csr_mat3.mtx'
 
     # 计算raw_user_item_mat并写入文档
     # max_item_id = get_convert_no_small_dataset_max_item_id(convert_no_small_filename)#284409
@@ -412,14 +464,15 @@ if __name__ == '__main__':
     # print("user_item_sparse_mat written finished !!! ")
 
     # 计算item_item_sparse_mat并存入文档
-    # user_item_sparse_mat = mmread(user_item_sparse_mat_filename)
+    user_item_sparse_mat = mmread(user_item_sparse_mat_filename)
+    user_item_sparse_mat = csr_matrix(user_item_sparse_mat)
     # item_item_sparse_mat, _ = cal_similar_sparse(user_item_sparse_mat)
     # mmwrite(item_item_csr_mat_filename, item_item_sparse_mat)
     # print("item_item_sparse_mat written finished !!! ")
+    print("user_item_sparse_mat read done!", datetime.datetime.now() - s)
 
-    # s = datetime.datetime.now()
     item_item_sparse_dict = get_item_item_sparse_dict(item_item_csr_mat_filename)
-    # print(datetime.datetime.now() - s)
+    print("item_item_sparse_dict read done!", datetime.datetime.now() - s)
 
     random.seed(1)
 
@@ -427,23 +480,26 @@ if __name__ == '__main__':
     # user_item_mat = regularize_user_item_mat(raw_user_item_mat)
     # print(user_item_mat)
 
+    user_id = 1000
     items_dict = dict()
-    for i in range(4):
+    for i in range(10):
         items_dict[random.randint(0, 200000)] = (None, 1)
         items_dict[random.randint(0, 200000)] = (None, 1)
-        items_dict[random.randint(0, 200000)] = (None, -4)
-        items_dict[random.randint(0, 200000)] = (None, 2)
-    new_user = User(1000, items_dict=items_dict)
+    new_user = User(user_id=user_id, items_dict=items_dict)
 
     new_user_item_dict = get_new_user_item_dict(new_user)
-    print("new_user_item_dict", new_user_item_dict)
-    # rec_item_dict = recommend_new(new_user, user_item_mat)
-    # print("rec_item_dict : ", rec_item_dict)
+    # print("new_user_item_dict", new_user_item_dict)
 
-    # sorted_final_rec_item_tuples = get_final_rec_item_list(new_user_item_dict, rec_item_dict, item_item_sparse_dict)
-    # print(sorted_final_rec_item_tuples)
+    # item_based && user_based recommendation
+    # rec_item_dict = user_based_rec(new_user, user_item_mat)
+    rec_item_dict = user_based_rec_sparse(new_user, user_item_sparse_mat)
+    print("rec_item_dict done!", datetime.datetime.now() - s)
+    # print("rec_item_dict : ", rec_item_dict)
+    final_rec_list = get_final_rec_item_list(new_user_item_dict, rec_item_dict, item_item_sparse_dict)
 
 
     # just item_based recommendation
-    final_item_based_rec_list = item_based_rec(new_user_item_dict, item_item_sparse_dict)
+    # final_item_based_rec_list = item_based_rec(new_user_item_dict, item_item_sparse_dict)
+
+    print(datetime.datetime.now() - s)
 
