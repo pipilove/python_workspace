@@ -1,0 +1,115 @@
+<!--header-->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Language" content="zh-cn" />
+	<!-- <base target="_blank" /> -->
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+
+</head>
+<body>
+	<div id="header">
+        {% load staticfiles %}
+        <img class="logo" src= "{% static "img/music.png" %}"  alt="logo" />
+		<div class="wrapper" id = "header_content">
+			<div class = "navlinks" id="main_links">
+				<a href="{% url 'home' %}" title="homepage" onfocus="this.blur();" rel="home" class="home-link active">
+					<span class = "first">H</span><span>ome</span>
+				</a>
+				<a href="{% url 'explore' %} " onfocus="this.blur();" title="explore" target="_blank">
+					<span class = "first">E</span><span>plore</span>
+				</a>
+				<a href="{% url 'recommend' %}" onfocus="this.blur();" title="recommend" target="_blank">
+					<span class = "first">G</span><span>uess</span>
+				</a>
+			</div>
+			<div id="header_middle" >
+				<div id="auth_nav">
+                    {% if username %}
+                        <span style="color: #9DC122;">hello,{{ username }}</span>
+                        <a href="{% url 'logout' %}" onfocus="this.blur();" >
+                            <span>Log out</span>
+                        </a>
+                    {% else %}
+                        <a href="#" class="login" onclick="openme()">Log in</a>
+					    <a href="#" class="signup" onclick="openme2()">Sign up</a>
+                    {% endif %}
+				</div>
+			</div>
+			<div id="header_right">
+				<div id="search" class="searchbox header_item">
+					<form class="search" method="get" action="{% url 'search' %}" target="_blank" accpet-charset="UTF-8">
+						<input autocomplete="off" class="text q" id="q" name="q" placeholder="Search" type="text">
+{#						<input class="search_submit" value=" Search " type="submit">#}
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{#    form for login#}
+	<div id="login1"></div>
+		<div id="login2">
+			<div style="height:45px;">
+				<div id="welcome" class="float">welcome</div>
+				<div id="close_button" class="float">
+					<input class="hand" type="button" onClick="closeme()">
+				</div>
+			</div>
+            <form method='post' action="{% url 'login' %}" enctype="multipart/form-data" id="login_form">
+                {% csrf_token %}
+                <div class="shuru">
+                    {{ lf.username.errors }}
+                    <img src = "{% static "img/user.png" %}" alt = "用户名"/>
+{#                    <label for="id_username">用户名：</label>#}
+                    {{ lf.username }}
+                </div>
+                <div class="shuru">
+                    {{ lf.passwd.errors }}
+                    <img src = "{% static "img/pass.png" %}" alt = "密码"/>
+{#                    <label for="id_passwd">密&nbsp&nbsp&nbsp&nbsp码：</label>#}
+                    {{ lf.passwd }}
+                </div>
+                 <input class="hand" id="log_in" type="submit" name="login" value="" >
+            </form>
+		</div>
+{#    form for signup#}
+    	<div id="login12"></div>
+		<div id="login22">
+			<div style="height:45px;">
+{#				<div id="link_log" class="float">已有账户<a href="#" class="login" onclick="openme()">Log in</a></div>#}
+                <div id="link_log" class="float">Sign Up</div>
+				<div id="close_button2" class="float">
+					<input class="hand" type="button" onClick="closeme2()">
+				</div>
+			</div>
+            <form method='post' action="{% url 'signup' %}" enctype="multipart/form-data" id="signup_form">
+                {% csrf_token %}
+                <div class="shuru">
+                    {{ sf.username.errors }}
+                    <label for="id_username">用户名：</label>
+                    {{ sf.username }}
+                </div>
+                <div class="shuru">
+                    {{ sf.email.errors }}
+                    <label for="id_email">邮&nbsp&nbsp&nbsp&nbsp箱：</label>
+                    {{ sf.email }}
+                </div>
+                <div class="shuru">
+                    {{ sf.passwd.errors }}
+                    <label for="id_passwd">密&nbsp&nbsp&nbsp&nbsp码：</label>
+                    {{ sf.passwd }}
+                </div>
+                 <input class="hand" id="sign_up" type="submit" name="signup" value="" >
+            </form>
+		</div>
+        {% load staticfiles %}
+        <script type="text/javascript" src="{% static 'js/login.js' %}"></script>
+    {% block mainbody %}
+
+    {% endblock %}
+
+</body>
+</html>

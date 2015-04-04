@@ -6,6 +6,7 @@
 # *~
 
 #python_wordspace not for stage
+pipiWeb/
 .idea/
 datasets/
 test/

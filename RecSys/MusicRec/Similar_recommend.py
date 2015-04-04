@@ -301,8 +301,7 @@ def user_based_rec_sparse(user_class, user_item_sparse_mat, top_n=50):
 
 def get_rec_list_sparse(new_user_item_sparse_vec, old_user_item_sparse_vec, threshold=1):
     rec_item_dict = dict()
-    rows, cols = old_user_item_sparse_vec.nonzero()
-    for row, col in zip(rows, cols):
+    for row, col in old_user_item_sparse_vec.nonzero():
         ui = old_user_item_sparse_vec[row, col]
         if ui > threshold and new_user_item_sparse_vec[row, col] == 0:
             rec_item_dict[col] = ui

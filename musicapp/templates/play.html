@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Play music page</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/application.css' %}">
+</head>
+<body >
+	<div id="mainBd" class="mainBd" style="width: 100%; height: 600px;">
+		<!-- 原来height=365px -->
+		<div id="prgrsCtn" class="prgrsCtn dspr" style="height: 15px; opacity: 1;">
+			<div id="timeTps" class="tps time hide" style="top: 15px; left: 7px; display: none;">
+				<div class="tpsAr"></div>
+				<div class="tpsLbd"></div>
+				<div class="tpsCtn">
+				<div class="inspt"></div>
+				<p class="ctt serif">00:09</p>
+				</div>
+				<div class="tpsRbd"></div>
+				</div>
+				<span class="prgrs"></span>
+				<span class="prgrs crt"></span>
+				<div class="timeTpsCtn hide">
+				<div class="tpsAr"></div>
+				<div class="tpsCtn"></div>
+			</div>
+		</div>
+		<div id="mdlHr" class="mdlHr" style="margin-top: -38px;"></div>
+		<!-- 中间 -->
+		<div id="mscPlrCtn" class="mscPlrCtn absCt" style="opacity: 1; margin-top: -270px;">
+			<div  id="vlmCtrl" onmousemove="show_vlmCtrl(this)" onmouseout="hide_vlmCtrl(this)" class="vlmCtrl" style="opacity: 1; left: 766px; top: 335px;">
+				<!--  原top:317px -->
+				<div class="vlmIcon"></div>
+				<div class="vlmCtn">
+					 <div class="vlmSlider" style="width: 45px;">
+						<a class="sldr" href="#"></a>
+					</div>
+				</div>
+			</div>
+			<!-- 包裹div -->
+			<!-- <div onmousemove="show()" onmouseout="hide()"  style=" left: -420px;top: 300px;height: 150px;width：50px;z-index:0;p position: absolute;background-position: -117px 0;"> -->
+				<div style ="height:20px; z-inex:1; float:left" ></div>
+				<div style ="height:20px; z-inex:1; float:left" ></div>
+				<div id="rMenu"  class="plyrBtns rMenu" data-tps=""  style="opacity: 0.5; left: -440px; top: 335px;;float:right" onmousemove="show()" >
+				<!-- 原top:317px -->
+				<div id="rMenuCtn" class="rMenuCtn" style="display: none;">
+					<!-- <a id="topAppBtn" class="rBtns" href="#" style="top: 15px;">音乐瀑布</a> -->
+					<a id="loveRd" class="rBtns" href="#" style="top: 42px;">红心电台</a>
+					<a id="psnRd" class="rBtns" href="{% url 'recommend' %}" style="top: 69px;">智能推荐</a>
+					<a id="chart" class="rBtns" href="{% url 'home' %}"style="top: 96px;">排行榜</a>
+					<a id="gnsBtn" class="rBtns" href="{% url 'home' %}" style="top: 123px;">随便听听</a>
+				</div>
+				<!-- 左侧动态 -->
+				<!-- <div class="clear"></div> -->
+			</div>
+		<!-- </div> -->
+			<!-- 包裹div -->
+			<script type="text/javascript">
+				function show()
+				{
+					var x = document.getElementById("rMenu");
+					x.style.opacity="1";
+					var ErMenu = document.getElementById("rMenuCtn");
+					ErMenu.style.display = "block";
+				}
+				function hide()
+				{
+					var x = document.getElementById("rMenu");
+					x.style.opacity="0.5";
+					var ErMenu = document.getElementById("rMenuCtn");
+					ErMenu.style.display = "none";
+				}
+
+			</script>
+			<script type="text/javascript">
+				function show_vlmCtrl(x)
+				{
+					x.style.opacity="1";
+				}
+				function hide_vlmCtrl(x)
+				{
+					x.style.opacity="0.2";
+				}
+			</script>
+
+			<div id="mscPlrMask" class="mscPlrMask">
+				<div id="playCtl" class="playCtlCtn play" style="opacity: 1;">
+					<a class="playCtl" href="#"></a>
+				</div>
+			</div>
+
+			<div id="mscPlr" class="mscPlr">
+				<div id="rotateCD" class="cv rt stRt" style="opacity: 1;">
+				</div>
+					<p class="tit">
+					{{ item_name }}
+					<a id="shrIcon" class="shrIcon" href="#" style="opacity: 0.5;"></a>
+					</p>
+			</div>
+			<div class="mscPlrBtnCtn" style="width: 123%; left: -11.5%;">
+				<div class="plrBtnBg love" data-tps="喜欢" style="left: -48%;">
+                    {% if flag1  %}
+                        <a id="playerLove"  class="plrBtn lwRt overlay" href="{% url 'love' item_id%}" onclick="turned1()"></a>
+                    {% else %}
+                        <a id="playerLove"  class="plrBtn lwRt overlay" style="background-position: -400px 0px;" href="{% url 'love' item_id%}"></a>
+                    {% endif %}
+
+				</div>
+				<div class="plrBtnBg hate" data-tps="讨厌">
+                    {% if flag2  %}
+                    <a id="playerHate" class="plrBtn lwRt overlay" href="{% url 'hate' item_id%}" onclick="turned2()"></a>
+                    {% else %}
+                    <a id="playerHate" style="background-position: -300px 0px;" class="plrBtn lwRt overlay" href="{% url 'hate' item_id%}"></a>
+                    {% endif %}
+				</div>
+				<div class="plrBtnBg rptOne" data-tps="单曲循环">
+				<a id="playerRptOne" class="plrBtn lwRt overlay" href="#"></a>
+				</div>
+				<div class="plrBtnBg next" data-tps="换歌" style="right: -48%;">
+				<a id="playerNext" class="plrBtn lwRt overlay" href="#"></a>
+				</div>
+			</div>
+
+			<script type="text/javascript">
+				var times1 = 0;
+				function turned1()
+				{
+					var x = document.getElementById("playerLove");
+					x.style.backgroundPosition = times1 % 2 == 0 ? '-400px 0px' : '0px -100px';
+					times1 ++;
+				}
+                var times2 = 0;
+				function turned2()
+				{
+					var x = document.getElementById("playerHate");
+					x.style.backgroundPosition = times2 % 2 == 0 ? '-300px 0px' : '-300px -100px';
+					times2 ++;
+				}
+			</script>
+
+		</div>
+		<!-- 中间结束 -->
+		<div class="clear"></div>
+		<div style = "width: 100px; height:180px; z-index:3; position:absolute; left:20px; top:220px"  onmouseout="hide()"><p style="color:rgba(0,0,0,0)">aaaaaaaaaaaaaaa</p></div>
+	</div>
+    {% load staticfiles %}
+    <script type="text/javascript" src="{% static 'js/playerCore23.js' %}"></script>
+</body>
+</html>

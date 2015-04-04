@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="UTF-8">
+    <title>Explore</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/explore.css' %}">
+     <script type="text/javascript" src="{% static 'js/login.js' %}"></script>
+    <script type="text/javascript">
+	//初始化将div1显示  div2隐藏
+	window.onload = function() {
+		/*document.getElementById('div0').style.display='block';*/
+		document.getElementById('div1').style.display='block';
+		document.getElementById('div2').style.display='none';
+    }
+	//右侧翻页按钮,隐藏div1，显示div2
+	 function showdiv2() {
+		document.getElementById('div1').style.display='none';
+		document.getElementById('div2').style.display='block';
+	}
+	//左侧翻页按钮，隐藏div2 显示div1
+	function showdiv1() {
+		document.getElementById('div2').style.display='none';
+		document.getElementById('div1').style.display='block';
+	}
+</script>
+</head>
+<body>
+     <div id="header">
+        {% load staticfiles %}
+        <img class="logo" src= "{% static "img/music.png" %}"  alt="logo" />
+		<div class="wrapper" id = "header_content">
+			<div class = "navlinks" id="main_links">
+				<a href="{% url 'home' %}" title="homepage" onfocus="this.blur();" rel="home"  target="_blank">
+					<span class = "first">H</span><span>ome</span>
+				</a>
+				<a href="{% url 'explore' %} " onfocus="this.blur();" title="explore"  target="_blank" class="home-link active">
+					<span class = "first">E</span><span>plore</span>
+				</a>
+				<a href="{% url 'recommend' %}" onfocus="this.blur();" title="recommend" target="_blank">
+					<span class = "first">G</span><span>uess</span>
+				</a>
+			</div>
+			<div id="header_middle" >
+				<div id="auth_nav">
+                    {% if username %}
+                        <span style="color: #9DC122;">hello,{{ username }}</span>
+                        <a href="{% url 'logout' %}" onfocus="this.blur();" >
+                            <span>Log out</span>
+                        </a>
+                    {% else %}
+                        <a href="#" class="login" onclick="openme()">Log in</a>
+					    <a href="#" class="signup" onclick="openme2()">Sign up</a>
+                    {% endif %}
+				</div>
+			</div>
+			<div id="header_right">
+				<div id="search" class="searchbox header_item">
+					<form class="search" method="get" action="{% url 'search' %}" accpet-charset="UTF-8">
+						<input autocomplete="off" class="text q" id="q" name="q" placeholder='Search' type="text">
+{#						<input class="search_submit" value=" Search " type="submit">#}
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{#    form for login#}
+	<div id="login1"></div>
+     <div id="login2">
+			<div style="height:45px;">
+				<div id="welcome" class="float">welcome</div>
+				<div id="close_button" class="float">
+					<input class="hand" type="button" onClick="closeme()">
+				</div>
+			</div>
+            <form method='post' action="{% url 'login' %}" enctype="multipart/form-data" id="login_form">
+                {% csrf_token %}
+                <div class="shuru">
+                    {{ lf.username.errors }}
+                    <img src = "{% static "img/user.png" %}" alt = "用户名"/>
+{#                    <label for="id_username">用户名：</label>#}
+                    {{ lf.username }}
+                </div>
+                <div class="shuru">
+                    {{ lf.passwd.errors }}
+                    <img src = "{% static "img/pass.png" %}" alt = "密码"/>
+{#                    <label for="id_passwd">密&nbsp&nbsp&nbsp&nbsp码：</label>#}
+                    {{ lf.passwd }}
+                </div>
+                 <input class="hand" id="log_in" type="submit" name="login" value="" >
+            </form>
+		</div>
+{#    form for signup#}
+    	<div id="login12"></div>
+		<div id="login22">
+			<div style="height:45px;">
+{#				<div id="link_log" class="float">已有账户<a href="#" class="login" onclick="openme()">Log in</a></div>#}
+                <div id="link_log" class="float">Sign Up</div>
+				<div id="close_button2" class="float">
+					<input class="hand" type="button" onClick="closeme2()">
+				</div>
+			</div>
+            <form method='post' action="{% url 'signup' %}" enctype="multipart/form-data" id="signup_form">
+                {% csrf_token %}
+                <div class="shuru">
+                    {{ sf.username.errors }}
+                    <label for="id_username">用户名：</label>
+                    {{ sf.username }}
+                </div>
+                <div class="shuru">
+                    {{ sf.email.errors }}
+                    <label for="id_email">邮&nbsp&nbsp&nbsp&nbsp箱：</label>
+                    {{ sf.email }}
+                </div>
+                <div class="shuru">
+                    {{ sf.passwd.errors }}
+                    <label for="id_passwd">密&nbsp&nbsp&nbsp&nbsp码：</label>
+                    {{ sf.passwd }}
+                </div>
+                 <input class="hand" id="sign_up" type="submit" name="signup" value="" >
+            </form>
+		</div>
+
+
+    	<div id="container">
+		<div id="first_time_splash" class="arrow">
+			<div class="wrapper">
+				<div id="header_right"></div>
+				<div id="masthead">
+					<div id="logo_medium">
+						<span class="i-logotype"></span>
+					</div>
+					<p id="tagline">
+						  Music  Recommendation
+						<br>
+						Choose   mood   theme    style
+					</p></div>
+				<div id="splash_search" class="punchout">
+					<a id="back" title="Back" style="display: none;" href="#">
+						<span class="i-arrow-left"></span>
+					</a>
+					<h1 id="splash_title" class="center">
+						Play me some
+					<span id="ellipsis">...</span>
+					</h1>
+					<div class="slider" style="">
+						<div class="slider_inner">
+							<div class="page page1">
+									<a class="next_page page_horizontal" onclick="showdiv2()" href="javascript:void(0);">
+										<span class="i-chevron-right"></span>
+									</a>
+									<!-- <a class="prev_page page_horizontal disabled" href="#"> -->
+									<a class="prev_page page_horizontal" onclick="showdiv1()"  href="javascript:void(0);">
+										<span class="i-chevron-left"></span>
+									</a>
+									<div class="">
+									<!-- <div id="div0" class="splash_tags tags clearfix">	 -->
+									   <div id="div1" style="margin:0px 30px" class="tags_pages"style="left: -600px;">
+											<div  class="tag_page" style="">
+												<a class="tag " title="youtube" href="#">
+													<span>DJ舞曲</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>纯音乐</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>沧桑</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>磁性</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>凄美</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>纯净</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>电音</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>动感</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>钢琴</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>古典</span>
+												</a>
+
+												<a class="tag " title="youtube" href="#">
+													<span>古风</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>和声</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>哼唱</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>红歌</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>怀旧</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>吉他</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>节奏</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>劲爆</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>经典</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>老歌</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>空灵</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>拉丁</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>浪漫</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>另类</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>流金岁月</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>民歌</span>
+												</a>
+
+												<a class="tag " title="youtube" href="#">
+													<span>民乐</span>
+												</a><a class="tag " title="youtube" href="#">
+													<span>男低音</span>
+												</a>
+
+												<a class="tag " title="youtube" href="#">
+													<span>男高音</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>女声</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>前卫</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>青春</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>轻音乐</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>清新</span>
+												</a><a class="tag " title="youtube" href="#">
+													<span>情歌</span>
+												</a><a class="tag " title="youtube" href="#">
+													<span>沙哑</span>
+												</a><a class="tag " title="youtube" href="#">
+													<span>伤感</span>
+												</a><a class="tag " title="youtube" href="#">
+													<span>舒缓</span>
+												</a><a class="tag " title="youtube" href="#">
+													<span>提琴</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>天籁</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>童声</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>唯美</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>休闲</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>中国风</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>藏歌</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>激情</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>粤语</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>英语</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>日韩</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>日语</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>闽南语</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>欧美</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>韩语</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>法语</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>萨克斯</span>
+												</a>
+
+
+											</div>
+										</div>
+									   <div id="div2" style="margin:0px 30px" class="tags_pages"style="left: -600px;">
+											<div  class="tag_page" style="">
+												<a class="tag " title="youtube" href="#">
+													<span>怀念</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>婚礼</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>寂寞</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>劲舞团</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>酒吧</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>咖啡厅</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>励志</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>旅行</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>好听</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>韩剧</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>海豚音</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>广告歌曲</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>格莱美</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>搞笑</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>氛围</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>分手</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>儿歌</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>俄罗斯</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>对唱</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>动漫</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>NBA</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>背景音乐</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>TVB</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>电视剧</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>安静</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>70后</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>80后</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>90后</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>美好</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>偶像剧</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>平静</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>汽车</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>热闹</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>深情</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>圣诞节</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>舒服</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>思念</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>舒服</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>胎教</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>泰国</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>甜蜜</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>网络歌曲</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>午后</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>武侠</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>喜悦</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>想哭</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>校园</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>夜店</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>印度</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>影视原声</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>优美</span>
+												</a>
+												<a class="tag " title="youtube" href="#">
+													<span>原生态</span>
+												</a>
+
+
+											</div>
+										</div>
+										<div id="splash_search_container"> </div>
+									</div>
+									<!--<div id="splash_search_container"> </div>-->
+							</div>
+							<!-- <div class="page page2">
+								<a class="next_page page_horizontal" href="#">
+									<span class="i-chevron-right"></span>
+                                </a>
+								<a class="prev_page page_horizontal disabled" href="#">
+									<span class="i-chevron-left"></span>
+								</a>
+								<div class="splash_tags tags clearfix">
+									<div class="tags_pages">
+										<div class="tag_page" style="">
+												<a class="tag " title="youtube" href="#">
+													<span>youtube</span>
+												</a>
+										</div>
+									</div>
+								</div>
+								<div class="collection_preview"></div>
+								<div class="view_all_link"></div>
+							</div>
+							<div class="page page3">
+								<div class="collection_preview">
+								</div>
+							</div> -->
+						</div>
+						<!-- <div id="big_search" class="searchbox clearfix">
+							<form class="search" method="get" action="/search" accept-charset="UTF-8">
+							<span class="i-plus"></span>
+							<input id="splash_q" class="text q" type="text" placeholder="Enter any artist, genre, activity, or mood" name="q" autocomplete="off">
+							<input class="search_submit" type="submit" onclick="search0()" value=" ">
+							</form>
+							<div class="autocomplete" style="display: none;"></div>
+						</div> -->
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
