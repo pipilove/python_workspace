@@ -1,5 +1,5 @@
 from scipy import spatial
-from numpy import loadtxt
+from numpy import loadtxt, array, arange, piecewise
 from numpy import random
 from scipy.spatial.distance import pdist
 
@@ -22,5 +22,12 @@ def generate_random_mat():
     print(user_item_mat)
 
 
+def test():
+    x = arange(10)
+    x = array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    piecewise(x, [x < 2, x > 6], [7 - x, x, 2 * x])
+
+
 if __name__ == '__main__':
-    generate_random_mat()
+    # generate_random_mat()
+    test()
