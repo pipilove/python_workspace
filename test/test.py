@@ -30,4 +30,8 @@ def test():
 
 
 if __name__ == '__main__':
-    generate_random_mat()
+    # generate_random_mat()
+    a = range(3)
+    b = [6,7,8]
+    c = list(zip(a,b))
+    print(c)

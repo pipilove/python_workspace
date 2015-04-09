@@ -25,7 +25,7 @@ from os.path import exists, dirname
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from numpy import ndarray
+from numpy import ndarray, zeros, argsort
 
 
 def get_topic_list(twords_filename):
@@ -62,7 +62,22 @@ def get_most_overlap_topics(tword_list):
     :param tword_list:
     :return:
     '''
-
+    topic_num = len(tword_list)
+    # print(set(tword_list[0]), set(tword_list[10]))
+    overlap_topics_cnt = zeros([topic_num, topic_num])
+    for topic_id in range(topic_num):
+        for topic_id_j in range(topic_id + 1, topic_num):
+            # print((set(tword_list[topic_id]).intersection(set(tword_list[topic_id_j]))))
+            overlap_topics_cnt[topic_id, topic_id_j] = len(
+                set(tword_list[topic_id]).intersection(set(tword_list[topic_id_j])))
+            overlap_topics_cnt[topic_id_j, topic_id] = len(
+                set(tword_list[topic_id]).intersection(set(tword_list[topic_id_j])))
+            # print(topic_id, topic_id_j, overlap_topics_cnt[topic_id, topic_id_j])
+    top_overlap = overlap_topics_cnt.argmax(axis=1)
+    top_overlap_cnt = [overlap_topics_cnt[line_id, i] for line_id, i in enumerate(top_overlap)]
+    print([str(i) + ':' + str(j) for i, j in zip(top_overlap, top_overlap_cnt)])
+    print(argsort(-overlap_topics_cnt[0]))
+    return top_overlap
 
 
 def graph_terms_to_topics(tword_list, topic_ids=None, savefig_filename=None, show_flag=True):
@@ -127,7 +142,7 @@ def graph_must_links(must_links_list):
         G.add_edge(must1, must2)
 
     # Compute the clustering coefficient for nodes
-    print(nx.clustering(G, nodes='phone'))
+    # print(nx.clustering(G, nodes='phone'))
 
     pos = nx.spring_layout(G)  # positions for all nodes
 
@@ -145,10 +160,14 @@ if __name__ == '__main__':
     # twords_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\t100w10.twords'
     twords_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.twords'
     tword_list = get_topic_list(twords_filename)
-    graph_terms_to_topics(tword_list, topic_ids=[0, 1, 2, 3],
-                          savefig_filename='./graph_terms_to_topics_png/graph_terms_to_topics0-3')
+
+    savefig_filename = './graph_terms_to_topics_png/graph_terms_to_topics0,1,4,9,10,14'
+    graph_terms_to_topics(tword_list, topic_ids=[0, 1, 4, 9, 10, 14], savefig_filename=savefig_filename)
+
+    top_overlap = get_most_overlap_topics(tword_list)
+    must_links_list = zip(range(len(top_overlap)), top_overlap)
 
     # must_links_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\foramc.knowl_mustlinks'
     must_links_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.knowl_mustlinks'
     # must_links_list = get_must_links(must_links_filename)
-    # graph_must_links(must_links_list)
+    graph_must_links(must_links_list)
