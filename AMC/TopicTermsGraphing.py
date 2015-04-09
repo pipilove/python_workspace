@@ -20,6 +20,8 @@ __mtime__ = '4/3/2015-003'
                   ┗┻┛  ┗┻┛
 """
 import linecache
+from os import makedirs
+from os.path import exists, dirname
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -54,14 +56,24 @@ def get_topic_list(twords_filename):
     return topic_list
 
 
-def graph_terms_to_topics(tword_list):
+def get_most_overlap_topics(tword_list):
+    '''
+    从tword_list中找到word覆盖最多的一些topic
+    :param tword_list:
+    :return:
+    '''
+
+
+
+def graph_terms_to_topics(tword_list, topic_ids=None, savefig_filename=None, show_flag=True):
     # create a new graph and size it
     G = nx.Graph()
     plt.figure(figsize=(10, 10))
 
     # generate the edges
-    num_topics = tword_list.shape[0]
-    for i in range(0, num_topics):
+    if topic_ids is None:
+        topic_ids = range(0, tword_list.shape[0])
+    for i in topic_ids:
         topicLabel = "topic " + str(i)
         for term in tword_list[i]:
             G.add_edge(topicLabel, term)
@@ -75,10 +87,15 @@ def graph_terms_to_topics(tword_list):
     nx.draw_networkx_labels(g, pos)
 
     # plot edges
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), alpha=0.1)
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), alpha=1.0, width=0.2, edge_color='g')
 
     plt.axis('off')
-    plt.show()
+    if savefig_filename is not None:
+        if not exists(dirname(savefig_filename)):
+            makedirs(dirname(savefig_filename))
+        plt.savefig(savefig_filename, dpi=1000, fmt='png')
+    if show_flag:
+        plt.show()
 
 
 def get_must_links(must_links_filename):
@@ -125,10 +142,13 @@ def graph_must_links(must_links_list):
 
 
 if __name__ == '__main__':
-    twords_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\t100w10.twords'
-    # twords_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.twords'
-    # tword_list = get_topic_list(twords_filename)
-    # graph_terms_to_topics(tword_list)
-    must_links_list = get_must_links(
-        must_links_filename=r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\foramc.knowl_mustlinks')
-    graph_must_links(must_links_list)
+    # twords_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\t100w10.twords'
+    twords_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.twords'
+    tword_list = get_topic_list(twords_filename)
+    graph_terms_to_topics(tword_list, topic_ids=[0, 1, 2, 3],
+                          savefig_filename='./graph_terms_to_topics_png/graph_terms_to_topics0-3')
+
+    # must_links_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\foramc.knowl_mustlinks'
+    must_links_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.knowl_mustlinks'
+    # must_links_list = get_must_links(must_links_filename)
+    # graph_must_links(must_links_list)

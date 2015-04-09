@@ -1,6 +1,7 @@
+import numpy
+from numpy.ma import argsort, sort
 from scipy import spatial
-from numpy import loadtxt, array, arange, piecewise
-from numpy import random
+from numpy import loadtxt, array, arange, piecewise, random
 from scipy.spatial.distance import pdist
 
 
@@ -29,5 +30,4 @@ def test():
 
 
 if __name__ == '__main__':
-    # generate_random_mat()
-    test()
+    generate_random_mat()
