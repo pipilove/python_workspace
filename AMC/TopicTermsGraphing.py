@@ -21,11 +21,12 @@ __mtime__ = '4/3/2015-003'
 """
 import linecache
 from os import makedirs
+import os
 from os.path import exists, dirname
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from numpy import ndarray, zeros, argsort
+from numpy import ndarray, zeros, argsort, loadtxt, sort, savetxt
 
 
 def get_topic_list(twords_filename):
@@ -56,6 +57,18 @@ def get_topic_list(twords_filename):
     return topic_list
 
 
+def write_top_topic_dist(top_n=20,
+                         input_filename=r'..\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.twdist',
+                         output_filename=r'..\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.top_twdist'):
+    '''
+    从topic_dist分布中抽取出topic最相关的top_n个word, 并写入文件
+    :return:
+    '''
+    tword_dist_array = loadtxt(input_filename)
+    tword_dist_array = -sort(-tword_dist_array, axis=1)
+    savetxt(output_filename, tword_dist_array[:, 0:top_n], fmt='%f')
+
+
 def get_most_overlap_topics(tword_list):
     '''
     从tword_list中找到word覆盖最多的一些topic
@@ -76,7 +89,7 @@ def get_most_overlap_topics(tword_list):
     top_overlap = overlap_topics_cnt.argmax(axis=1)
     top_overlap_cnt = [overlap_topics_cnt[line_id, i] for line_id, i in enumerate(top_overlap)]
     print([str(i) + ':' + str(j) for i, j in zip(top_overlap, top_overlap_cnt)])
-    print(argsort(-overlap_topics_cnt[0]))
+    print('overlap_topics_cnt[0] : ', argsort(-overlap_topics_cnt[12]))
     return top_overlap
 
 
@@ -127,47 +140,98 @@ def get_must_links(must_links_filename):
     return must_links_list
 
 
-def graph_must_links(must_links_list):
+def get_cannot_links(cannot_links_filename):
     '''
-
-    :param must_links_list:
+    从文件中读取cannot_links对，
+    :param cannot_links_filename:
     :return:
     '''
+    lines = linecache.getlines(cannot_links_filename)
+    cannot_links_list = list()
+    for line in lines:
+        cannot_links_list.append(line.strip().split())
+    # print(cannot_links_list)
+    return cannot_links_list
+
+
+def graph_multi_links(*links_list, sub_items=None, savefig_filename=None):
+    # generate sub links_list if list2 is not None
+    if sub_items:
+        links_list = [[link for link in links_list_i if sub_items.intersection(set(link))] for links_list_i in
+                      links_list]
+    # for links_list_i in links_list: print(links_list_i)
+
     # create a new graph and size it
-    G = nx.Graph()
     plt.figure(figsize=(15, 10))
+    G = nx.Graph()
 
-    # generate the edges
-    for must1, must2 in must_links_list:
-        G.add_edge(must1, must2)
+    # generate the edges for all link_lists
+    for links_list_i in links_list:
+        for link1, link2 in links_list_i:
+            G.add_edge(link1, link2)
+            # Compute the clustering coefficient for nodes
+            # print(nx.clustering(G, nodes='phone'))
 
-    # Compute the clustering coefficient for nodes
-    # print(nx.clustering(G, nodes='phone'))
-
-    pos = nx.spring_layout(G)  # positions for all nodes
-
-    # we'll plot topic labels and terms labels separately to have different colours
+    # plot nodes
+    pos = nx.spring_layout(G)  # positions dist for all nodes
+    # pos = nx.shell_layout(G)  # positions dist for all nodes
+    # pos = nx.circular_layout(G)  # positions dist for all nodes
     nx.draw_networkx_labels(G, pos)  # , font_color='r')
 
-    # plot edges
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), alpha=0.4, edge_color='r')  # alpha:The node transparency
+    # we'll plot edges in diff link_list_i separately to have different colours
+    edge_color_list = ['g', 'r', 'b', 'k']
+    for links_list_i, edge_color in zip(links_list, edge_color_list):
+        nx.draw_networkx_edges(G, pos, edgelist=links_list_i, alpha=0.4, edge_color=edge_color)
 
     plt.axis('off')
+
+    # save figure into file
+    if savefig_filename is not None:
+        if not exists(dirname(savefig_filename)):
+            makedirs(dirname(savefig_filename))
+        plt.savefig(savefig_filename, dpi=1000, fmt='png')
     plt.show()
 
 
 if __name__ == '__main__':
     # twords_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\t100w10.twords'
     twords_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.twords'
-    tword_list = get_topic_list(twords_filename)
+    # tword_list = get_topic_list(twords_filename)
+    # savefig_filename = './AMC/graph_terms_to_topics_png/graph_terms_to_topics2'
+    # graph_terms_to_topics(tword_list, topic_ids=[4, 6, 12], savefig_filename=savefig_filename)
 
-    savefig_filename = './graph_terms_to_topics_png/graph_terms_to_topics0,1,4,9,10,14'
-    graph_terms_to_topics(tword_list, topic_ids=[0, 1, 4, 9, 10, 14], savefig_filename=savefig_filename)
+    # draw 最相关的topics
+    # top_overlap = get_most_overlap_topics(tword_list)
+    # links_list = zip(range(len(top_overlap)), top_overlap)
 
-    top_overlap = get_most_overlap_topics(tword_list)
-    must_links_list = zip(range(len(top_overlap)), top_overlap)
-
+    # draw links
     # must_links_filename = r'E:\mine\java_workspace\AMC_master\Data\Output\AMC\100Reviews\DomainModels\foramc\foramc.knowl_mustlinks'
     must_links_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.knowl_mustlinks'
-    # must_links_list = get_must_links(must_links_filename)
-    graph_must_links(must_links_list)
+    must_links_list = get_must_links(must_links_filename)
+    graph_multi_links(must_links_list)
+    cannot_links_filename = r'E:\mine\java_workspace\AMC_master\Data\pre_output\Output0\AMC\100Reviews\DomainModels\CellPhone\CellPhone.knowl_cannotlinks'
+    cannot_links_list = get_cannot_links(cannot_links_filename)
+    # other_links = [['expensive', 'charge'], ['expensive', 'pocket']]
+    # graph_multi_links(must_links_list, cannot_links_list, sub_items={'price', 'expensive'})#, savefig_filename = './AMC/graph_links_png/graph_links_price_exp1')
+
+
+def graph_must_links(must_links_list):
+    '''
+    :param must_links_list:
+    :return:
+    '''
+    # create a new graph and size it
+    G = nx.Graph()
+    plt.figure(figsize=(15, 10))
+    # generate the edges
+    for must1, must2 in must_links_list:
+        G.add_edge(must1, must2)
+    # Compute the clustering coefficient for nodes
+    # print(nx.clustering(G, nodes='phone'))
+    pos = nx.spring_layout(G)  # positions for all nodes
+    # we'll plot topic labels and terms labels separately to have different colours
+    nx.draw_networkx_labels(G, pos)  # , font_color='r')
+    # plot edges
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), alpha=0.4, edge_color='r')  # alpha:The node transparency
+    plt.axis('off')
+    plt.show()
