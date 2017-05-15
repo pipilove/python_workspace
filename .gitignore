@@ -92,3 +92,7 @@ SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
 SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
 TopicModel/JIM/train.dat
 TopicModel/JIM/test_candidate.dat
+SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
+SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
+TopicModel/JIM/train.dat
+TopicModel/JIM/test_candidate.dat
