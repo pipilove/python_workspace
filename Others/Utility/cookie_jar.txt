@@ -1,0 +1,5 @@
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+123.57.158.180	FALSE	/~brat	FALSE	1451358460	sid	30b06bfafd014c7a4b21e5c37d65804e677b315568cb834110ebc307

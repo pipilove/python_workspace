@@ -5,9 +5,6 @@
 # *.[oa]
 # *~
  
-#others' project
-charimage/
- 
 #not for stage (never add)
 .idea/
 datasets/
@@ -85,17 +82,28 @@ ehthumbs.db
 Desktop.ini
 
 #subgit
-#./Algorithms
-Crawler
-MachineLearning
-./NLP
-PyQt
-SocialNetworks
-WebSite
-MusicSite
-#Oth
-RecSys
-TopicModel
+#./Algorithms/
+Crawler/
+MachineLearning/
+./NLP/
+PyQt/
+SocialNetworks/
+WebSite/
+MusicSite/
+#Oth/
+RecSys/
+TopicModel/
+charimage/
+
+
+SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
+SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
+TopicModel/JIM/train.dat
+TopicModel/JIM/test_candidate.dat
+SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
+SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
+TopicModel/JIM/train.dat
+TopicModel/JIM/test_candidate.dat
 SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
 SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
 TopicModel/JIM/train.dat
