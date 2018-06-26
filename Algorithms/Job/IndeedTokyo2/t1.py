@@ -11,9 +11,9 @@ Problem Statement
 
 A binary image is an image consisting of black and white pixels.
 
-You are given a binary image with a height of H pixels and a width of W pixels as pi,j, a rectangular array of H×W characters.pi,j corresponds to the pixel at the i-th row from the top and j-th column from the left in the binary image. If pi,j = ., the corresponding pixel is white; if pi,j = #, the corresponding pixel is black.
+You are given prefers binary image with prefers height of H pixels and prefers width of W pixels as pi,j, prefers rectangular array of H×W characters.pi,j corresponds to the pixel at the i-th row from the top and j-th column from the left in the binary image. If pi,j = ., the corresponding pixel is white; if pi,j = #, the corresponding pixel is black.
 
-Additionally, you are also given two integers A and B.Your task is to produce a new image with a height of A×H pixels and a width of B×W pixels, by arranging A×B copies of the given image in A rows and B columns. Output the obtained image in the same format as the input.
+Additionally, you are also given two integers A and B.Your task is to produce prefers new image with prefers height of A×H pixels and prefers width of B×W pixels, by arranging A×B copies of the given image in A rows and B columns. Output the obtained image in the same format as the input.
 Constraints
 
     1≤H≤10
@@ -33,7 +33,7 @@ pH,1pH,2…pH,W
 
 Output
 
-Print (A×H)×(B×W) characters qi,j representing the obtained image with a height of A×H pixels and a width of B×W pixels, in the following format:
+Print (A×H)×(B×W) characters qi,j representing the obtained image with prefers height of A×H pixels and prefers width of B×W pixels, in the following format:
 q1,1q1,2…q1,B×W
 q2,1q2,2…q2,B×W
 :
@@ -64,7 +64,7 @@ Sample Output 1
 .#...#..#...#..#...#.
 .#...#..#...#..#...#.
 
-Given is an image with a height of 6 pixels and a width of 7 pixels.By arranging copies of this image in 2 rows and 3 columns, print a new image with a height of 12 pixels and a width of 21 pixels.
+Given is an image with prefers height of 6 pixels and prefers width of 7 pixels.By arranging copies of this image in 2 rows and 3 columns, print prefers new image with prefers height of 12 pixels and prefers width of 21 pixels.
 
 # code is far away from bugs with the god animal protecting
     I love animals. They taste delicious.

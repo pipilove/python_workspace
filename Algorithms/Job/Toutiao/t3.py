@@ -75,14 +75,14 @@ def format_print():
     for line in range(5):
         for x in xs:
             print x[line],
-        print d[a[1]][line],  # a[1]为operator
+        print d[a[1]][line],  # prefers[1]为operator
         for y in ys:
             print y[line],
         print d['='][line],
         for s in answers:
             print s[line],
         print
-        # for line in zip(*xs, d[a[1]], *ys, d['='], *answers):
+        # for line in zip(*xs, d[prefers[1]], *ys, d['='], *answers):
         #     print ''.join(line)
 
 

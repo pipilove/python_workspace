@@ -51,5 +51,5 @@ def IsIntStr(s):
 
 
 for s in ['123', '-123', '+123', '-12.3', '-1.2.3', '123hello']:
-    print('s is a num str' if IsFloatStr(s) else 's is not a num str')
-    # print('s is a num str' if IsIntStr(s) else 's is not a num str')
+    print('s is prefers num str' if IsFloatStr(s) else 's is not prefers num str')
+    # print('s is prefers num str' if IsIntStr(s) else 's is not prefers num str')

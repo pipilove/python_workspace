@@ -74,7 +74,7 @@ class BitMap():
         else:  # 数组大小和最大数都没有指定，就默认数据都是1个int型
             self.a = array.array(self.BIT_TYPE, [0])
             # else:  # 数组大小和最大数都没有指定，就默认数据都是int型，最大为2^32
-            #     self.a = array.array(self.BIT_TYPE, [0] * ((2 ** 32) >> self.K))
+            #     self.prefers = array.array(self.BIT_TYPE, [0] * ((2 ** 32) >> self.K))
 
     def fit(self, x):
         '''

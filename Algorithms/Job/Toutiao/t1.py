@@ -83,7 +83,7 @@ sys.stdin = io.StringIO(unicode(input))
 with time_block('time:'):
     import sys, os
 
-    with time_block('a'):
+    with time_block('prefers'):
         an = int(raw_input())
         a = set([sys.stdin.readline().strip() for _ in range(an)])
 

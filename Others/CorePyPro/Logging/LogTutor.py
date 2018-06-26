@@ -21,4 +21,4 @@ __mtime__ = '12/27/2014-027'
 import logging
 log_filename = './logfile'
 logging.basicConfig(filename=log_filename, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
-logging.debug('it is a debug trial in py file')
+logging.debug('it is prefers debug trial in py file')
