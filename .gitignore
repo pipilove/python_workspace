@@ -4,7 +4,7 @@
 # exclude patterns (uncomment them if you want to use them):
 # *.[oa]
 # *~
- 
+
 #not for stage (never add)
 .idea/
 datasets/
@@ -13,19 +13,17 @@ launcher0
 launcher7133709813684183199
 *.bak
 *~
- 
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *.npy
 
- 
 # C extensions
 *.so
 Debug/
 ipch/
 
- 
 # Distribution / packaging
 .Python
 env/
@@ -43,16 +41,16 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
- 
+
 # PyInstaller
 # Usually these files are written by a python script from a template before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
- 
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
- 
+
 # Unit LanguageAnalysis / coverage reports
 htmlcov/
 .tox/
@@ -62,49 +60,24 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
- 
+
 # Translations
 *.mo
 *.pot
- 
+
 # Django stuff:
 *.log
- 
+
 # Sphinx documentation
 docs/_build/
- 
+
 # PyBuilder
 target/
 
 # Windows:
 Thumbs.db
-ehthumbs.db  
+ehthumbs.db  
 Desktop.ini
 
-#subgit
-#./Algorithms/
-Crawler/
-MachineLearning/
-./NLP/
-PyQt/
-SocialNetworks/
-WebSite/
-MusicSite/
-#Oth/
-RecSys/
-TopicModel/
-charimage/
-
-
-SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
-SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
-TopicModel/JIM/train.dat
-TopicModel/JIM/test_candidate.dat
-SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
-SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
-TopicModel/JIM/train.dat
-TopicModel/JIM/test_candidate.dat
-SocialNetworks/SocialNetworks/PGT/middlewares/u_lt_denmodel_dict.pkl
-SocialNetworks/SocialNetworks/FGM/middlewares/user_metapaths_set.pkl
-TopicModel/JIM/train.dat
-TopicModel/JIM/test_candidate.dat
+#mac
+.DS_Store
