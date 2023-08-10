@@ -41,7 +41,7 @@ def time_nature(func):
 
 
 @contextmanager
-def time_block(label='counting'):
+def time_block(label='cost', unit='m'):
     '''
     program block nature process time. 针对代码块的.
     usage:
@@ -53,7 +53,12 @@ def time_block(label='counting'):
     try:
         yield
     finally:
-        print('{} : {}'.format(label, time.perf_counter() - start_time))
+        cost = time.perf_counter() - start_time
+        if unit == 'm':
+            cost /= 60
+        elif unit == 'h':
+            cost /= 3600
+        print('{} : {:.1f}'.format(label, cost))
 
 
 def time_stump(func):
