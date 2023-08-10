@@ -1,32 +1,25 @@
 #!/usr/bin/env python
 # coding=gbk
 """
-__title__ = '带参数和不带参数的timeStump'
+__title__ = '甯﹀弬鏁板拰涓嶅甫鍙傛暟鐨則imeStump for py3'
 __author__ = 'pi'
 __mtime__ = '2014.12.12'
 """
 from contextlib import contextmanager
 import datetime
-from time import ctime
-
-try:  # py3
-    from time import perf_counter
-    from time import process_time
-except:  # py2
-    from time import clock as perf_counter
-    from time import clock as process_time
+import time
 
 
 def time_process(func):
     '''
-    program process time
+    program process time. 澶勭悊鏃堕棿鑰岄潪鑷劧鏃堕棿
     :return:
     '''
 
     def wrapped_func(*nkw, **kwargs):
-        start_time = process_time()
-        r = func(*nkw, **kwargs)  # 没有返回值就不用记录r
-        print('{}.{} : {}'.format(func.__module__, func.__name__, process_time() - start_time))
+        start_time = time.process_time()
+        r = func(*nkw, **kwargs)  # 娌℃湁杩斿洖鍊煎氨涓嶇敤璁板綍r
+        print('{}.{} : {}'.format(func.__module__, func.__name__, time.process_time() - start_time))
         return r
 
     return wrapped_func
@@ -34,14 +27,14 @@ def time_process(func):
 
 def time_nature(func):
     '''
-    function nature process time
+    function nature process time. 鑷劧鏃堕棿(浼氳寰堝鍏朵粬鍥犵礌褰卞搷锛屽璁＄畻鏈虹殑璐熻浇)
     :return:
     '''
 
     def wrapped_func(*nkw, **kwargs):
-        start_time = perf_counter()
+        start_time = time.perf_counter()
         r = func(*nkw, **kwargs)
-        print('{}.{} : {}'.format(func.__module__, func.__name__, process_time() - start_time))
+        print('{}.{} : {}'.format(func.__module__, func.__name__, time.perf_counter() - start_time))
         return r
 
     return wrapped_func
@@ -50,30 +43,30 @@ def time_nature(func):
 @contextmanager
 def time_block(label='counting'):
     '''
-    program block nature process time
+    program block nature process time. 閽堝浠ｇ爜鍧楃殑.
     usage:
     with time_block('counting'):
         statement block
     :return:
     '''
-    start_time = perf_counter()
+    start_time = time.perf_counter()
     try:
         yield
     finally:
-        print('{} : {}'.format(label, perf_counter() - start_time))
+        print('{} : {}'.format(label, time.perf_counter() - start_time))
 
 
 def time_stump(func):
     """
-    time stump decorator of func 不带参数的时间戳函数
+    time stump decorator of func 涓嶅甫鍙傛暟鐨勬椂闂存埑鍑芥暟
     :param func:
     :return:
     """
 
     def wrappedFunc(*nkw):
-        print(("start_time %s" % datetime.datetime.now()))  # ctime())  #Accurate to microseconds
+        print(("start_time %s" % datetime.datetime.now()))  # Accurate to microseconds
         result = func(*nkw)
-        print(("end_time %s" % datetime.datetime.now()))  # ctime())
+        print(("end_time %s" % datetime.datetime.now()))
         return result
 
     return wrappedFunc
@@ -87,12 +80,10 @@ def total_time(func):
     """
 
     def wrappedFunc(*nkw):
-        start_time = datetime.datetime.now()
-        # print(("start_time %s" % start_time ))  # ctime())  #Accurate to microseconds
+        start_time = datetime.datetime.now()  # Accurate to microseconds
         result = func(*nkw)
         end_time = datetime.datetime.now()
-        # print(("end_time %s" % end_time ))  # ctime())
-        print('{}.{} : {}'.format(func.__module__, func.__name__, end_time - start_time))
+        print('{}.{} : {}'.format(func.__module__, func.__name__, (end_time - start_time).total_seconds()))
         return result
 
     return wrappedFunc
@@ -100,7 +91,7 @@ def total_time(func):
 
 def timeStumpFunc_args(deco_args):
     """
-    time stump decorator of func 不带参数的时间戳函数
+    time stump decorator of func 涓嶅甫鍙傛暟鐨勬椂闂存埑鍑芥暟
     :param deco_args:
     :return:
     """
@@ -108,25 +99,23 @@ def timeStumpFunc_args(deco_args):
 
     def getFunc(func):
         def wrappedFunc(*nkw):
-            print(("start_time %s" % ctime()))
+            print(("start_time %s" % time.ctime()))
             result = func(*nkw)
-            print(("end_time %s" % ctime()))
+            print(("end_time %s" % time.ctime()))
             return result
 
         return wrappedFunc
 
     return getFunc
 
+# # # example
 
-# example
-@time_process
-# @timeStumpFunc_args('do_sth')
-def do_sth(*nkw):
-    print("%s" % nkw)
-
-
-# import sys, os, io
+# import sys, os
 #
 # CWD = os.path.split(os.path.realpath(__file__))[0]
 # sys.path.append(os.path.join(CWD, '../..'))
-# from Oth.Utility.TimeStump import time_block
+# from Oth.Utility.TimeStump import time_process
+#
+# @time_process
+# def do_sth(*nkw):
+#     print("%s" % nkw)
