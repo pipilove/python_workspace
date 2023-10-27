@@ -8,12 +8,12 @@ __mtime__ = '2014.12.12'
 from contextlib import contextmanager
 import datetime
 import time
+import sys
 
 
 def time_process(func):
     '''
     program process time. 处理时间而非自然时间
-    :return:
     '''
 
     def wrapped_func(*nkw, **kwargs):
@@ -28,7 +28,6 @@ def time_process(func):
 def time_nature(func):
     '''
     function nature process time. 自然时间(会被很多其他因素影响，如计算机的负载)
-    :return:
     '''
 
     def wrapped_func(*nkw, **kwargs):
@@ -47,7 +46,6 @@ def time_block(label='cost', unit='m'):
     usage:
     with time_block('counting'):
         statement block
-    :return:
     '''
     start_time = time.perf_counter()
     try:
@@ -60,6 +58,27 @@ def time_block(label='cost', unit='m'):
             cost /= 3600
         print('{} : {:.1f}'.format(label, cost))
 
+@contextmanager
+def time_block(label='cost', unit='m', file=sys.stdout):
+    '''
+    program block nature process time. 针对代码块的改进版
+    usage:
+    with time_block('counting'):
+        statement block
+    '''
+    start_time = time.perf_counter()
+    try:
+        yield
+    finally:
+        cost = time.perf_counter() - start_time
+        # 默认单位s
+        if unit == 'm':
+            cost /= 60
+        elif unit == 'h':
+            cost /= 3600
+        elif unit == 'ms':
+            cost *= 1000
+        print('{} : {:.1f}{}'.format(label, cost, unit), file=file)
 
 def time_stump(func):
     """
